@@ -108,7 +108,14 @@ listFrame.refreshList = function()
     end    
 end
 
-MinimapAlert_AddItemButton:SetPoint('TOP', listFrame, 'BOTTOM', 0, -8)
+-- Set position of add button if it exists
+-- This ensures the button is positioned relative to the list frame
+if MinimapAlert_AddItemButton then
+    MinimapAlert_AddItemButton:SetPoint('TOP', listFrame, 'BOTTOM', 0, -8)
+else
+    -- Fallback: Create a simple error message if button doesn't exist
+    print("Minimap Alert: Warning - AddItemButton not found, positioning may be incorrect")
+end
 
 
 listFrame.addEntry = function(newEntry)

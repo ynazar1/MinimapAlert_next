@@ -1,11 +1,19 @@
-## Interface: 11505
+## Interface: 11507
 ## Title: Minimap Alert
 ## Notes: Notifies you when something of interest appears on the minimap
 ## Author: Motig
-## Version: 26
+## Version: 28
+## IconTexture: Interface\Icons\INV_Misc_Spyglass_01
 ## SavedVariablesPerCharacter: 
 ## SavedVariables: MinimapAlert_Data
+## OptionalDeps: LibStub, LibDataBroker-1.1, LibDBIcon-1.0
 
+# Load libraries first
+libs\LibStub\LibStub.lua
+libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
+
+# Main addon files
 Minimap_Alert.lua
 Trackables.lua
 Helpers.lua
