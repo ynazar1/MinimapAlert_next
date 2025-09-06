@@ -1,0 +1,17 @@
+## Interface: 11505
+## Title: Minimap Alert
+## Notes: Notifies you when something of interest appears on the minimap
+## Author: Motig
+## Version: 26
+## SavedVariablesPerCharacter: 
+## SavedVariables: MinimapAlert_Data
+
+Minimap_Alert.lua
+Trackables.lua
+Helpers.lua
+DefaultSettings.lua
+Options.lua
+TrackingList.lua
+TrackableList.lua
+AddNode.lua
+WhatsNew.lua
