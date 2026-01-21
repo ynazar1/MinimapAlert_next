@@ -73,7 +73,7 @@ Access via the Config button or `/minimapalert` command:
 
 ## ⚙️ Technical Details
 
-- **Current Version**: 28
+- **Current Version**: 29
 - **Author**: Motig
 - **Compatibility**: 
   - WoW Retail (11.0+)
@@ -130,6 +130,12 @@ Access via the Config button or `/minimapalert` command:
 - Close the main window when not actively gathering
 
 ## 📋 Version History
+
+### Version 29 - WoW 12.0.0 Compatibility Update
+- ✅ WoW 12.0.0 API support (The War Within)
+- ✅ Fixed Settings panel opening issues
+- ✅ Fixed minimap position when opening/closing frame
+- ✅ Removed deprecated commands
 
 ### Version 28 - Major Update
 - ✅ Self-contained with bundled libraries

@@ -1,5 +1,32 @@
 # Minimap Alert - Changelog
 
+## Version 29 - WoW 12.0.0 Compatibility Update
+
+### API Compatibility
+- ✅ **WoW 12.0.0 Support**: Updated TOC files for The War Within (120000, 120001)
+- ✅ **Mists TOC Update**: Updated to interface version 50503
+- ✅ **Settings API Compatibility**: Added proper fallbacks for Retail vs Classic/Mists/Cata
+- ✅ **FlashClientIcon Compatibility**: Added existence check for older WoW versions
+- ✅ **InterfaceOptions Compatibility**: Added fallback for legacy InterfaceOptions API
+
+### Bug Fixes
+- ✅ **Settings Panel Opening**: Fixed `Settings.OpenToCategory` to use category object/ID instead of string name (WoW 12.0+ requirement)
+- ✅ **Minimap Position**: Fixed minimap moving when opening/closing frame without starting scan
+- ✅ **Minimap Initialization**: Store minimap position on first frame show to prevent unwanted movement
+- ✅ **Syntax Errors**: Fixed method call syntax errors with GetID() checks
+
+### Code Improvements
+- ✅ **Removed Commands**: Removed `/minimapalert testbutton` and `/minimapalert reset` commands
+- ✅ **Conditional Restore**: Only restore minimap if settings are initialized (prevents corruption warnings)
+- ✅ **Better Error Handling**: Improved API compatibility checks with proper fallbacks
+
+### Technical Changes
+- ✅ **API Version Detection**: Proper detection and handling of different WoW API versions
+- ✅ **Category ID Handling**: Proper handling of numeric category IDs in WoW 12.0+
+- ✅ **State Management**: Improved state handling to prevent minimap movement on frame open/close
+
+---
+
 ## Version 28 - Major Update
 
 ### New Features

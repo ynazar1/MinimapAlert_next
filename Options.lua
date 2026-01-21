@@ -76,7 +76,9 @@ local function createCheckboxGroup(configArray, parent, startY, settingsTable, c
     return checkButtons
 end
 
-local optionsFrame = CreateFrame('Frame', 'MinimapAlert_OptionsFrame', InterfaceOptionsFramePanelContainer)
+-- Create options frame with compatibility for different WoW versions
+local parentFrame = InterfaceOptionsFramePanelContainer or UIParent
+local optionsFrame = CreateFrame('Frame', 'MinimapAlert_OptionsFrame', parentFrame)
 optionsFrame.name = 'Minimap Alert'
 
 local titleText = optionsFrame:CreateFontString()
@@ -273,8 +275,15 @@ optionsFrame:SetScript('OnShow', function(self)
     MinimapAlert_AddNode:Hide()
 end)
 
---InterfaceOptions_AddCategory(optionsFrame)
-
-local category, layout = Settings.RegisterCanvasLayoutCategory(optionsFrame, optionsFrame.name, optionsFrame.name);
-category.ID = optionsFrame.name
-Settings.RegisterAddOnCategory(category);
+-- Register with appropriate API based on WoW version
+if Settings and Settings.RegisterCanvasLayoutCategory and Settings.RegisterAddOnCategory then
+    -- Retail: Use modern Settings API
+    local category, layout = Settings.RegisterCanvasLayoutCategory(optionsFrame, optionsFrame.name, optionsFrame.name);
+    Settings.RegisterAddOnCategory(category);
+    -- Store the category object for use in OpenToCategory calls
+    -- The category object has its own numeric ID that OpenToCategory expects
+    optionsFrame.category = category
+elseif InterfaceOptions_AddCategory then
+    -- Classic/Mists/Cata: Use legacy InterfaceOptions API
+    InterfaceOptions_AddCategory(optionsFrame)
+end

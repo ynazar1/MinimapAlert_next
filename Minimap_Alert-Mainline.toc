@@ -1,8 +1,8 @@
-## Interface: 110200, 110205
+## Interface: 120000, 120001
 ## Title: Minimap Alert
 ## Notes: Notifies you when something of interest appears on the minimap
 ## Author: Motig
-## Version: 28
+## Version: 29
 ## IconTexture: Interface\Icons\INV_Misc_Spyglass_01
 ## SavedVariablesPerCharacter: 
 ## SavedVariables: MinimapAlert_Data

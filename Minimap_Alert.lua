@@ -1,5 +1,5 @@
 minimapAlert = {}
-local addonVersion = 28
+local addonVersion = 29
 local foundNode = false
 local minimapSettings = {}
 local timeElapsed = 0
@@ -37,7 +37,34 @@ local function handleMinimapButtonClick(button)
             end
         end
     elseif button == "RightButton" then
-        Settings.OpenToCategory(MinimapAlert_OptionsFrame.name)
+        if Settings and Settings.OpenToCategory then
+            local optionsFrame = _G["MinimapAlert_OptionsFrame"]
+            if optionsFrame and optionsFrame.category then
+                -- In 12.0+, OpenToCategory needs numeric category ID
+                -- Try to get the ID from the category object
+                local categoryID = nil
+                if optionsFrame.category.GetID then
+                    categoryID = optionsFrame.category:GetID()
+                end
+                if categoryID and type(categoryID) == "number" then
+                    Settings.OpenToCategory(categoryID)
+                else
+                    -- If GetID doesn't exist, try accessing ID property directly
+                    categoryID = optionsFrame.category.ID
+                    if categoryID and type(categoryID) == "number" then
+                        Settings.OpenToCategory(categoryID)
+                    else
+                        -- Last resort: try passing category object (may work in some versions)
+                        Settings.OpenToCategory(optionsFrame.category)
+                    end
+                end
+            else
+                -- Fallback: try by name (may not work in 12.0+)
+                Settings.OpenToCategory(MinimapAlert_OptionsFrame.name)
+            end
+        elseif InterfaceOptionsFrame_OpenToCategory then
+            InterfaceOptionsFrame_OpenToCategory("Minimap Alert")
+        end
     end
 end
 
@@ -203,9 +230,34 @@ optionsButton:ClearAllPoints()
 optionsButton:SetPoint('BOTTOMRIGHT', -8, 8)
 optionsButton:SetText('Config')
 optionsButton:SetScript('OnClick', function()
-    --InterfaceOptionsFrame_OpenToCategory("Minimap Alert")
-    --InterfaceOptionsFrame_OpenToCategory("Minimap Alert")
-    Settings.OpenToCategory(MinimapAlert_OptionsFrame.name)
+    if Settings and Settings.OpenToCategory then
+        local optionsFrame = _G["MinimapAlert_OptionsFrame"]
+        if optionsFrame and optionsFrame.category then
+            -- In 12.0+, OpenToCategory needs numeric category ID
+            -- Try to get the ID from the category object
+            local categoryID = nil
+            if optionsFrame.category.GetID then
+                categoryID = optionsFrame.category:GetID()
+            end
+            if categoryID and type(categoryID) == "number" then
+                Settings.OpenToCategory(categoryID)
+            else
+                -- If GetID doesn't exist, try accessing ID property directly
+                categoryID = optionsFrame.category.ID
+                if categoryID and type(categoryID) == "number" then
+                    Settings.OpenToCategory(categoryID)
+                else
+                    -- Last resort: try passing category object (may work in some versions)
+                    Settings.OpenToCategory(optionsFrame.category)
+                end
+            end
+        else
+            -- Fallback: try by name (may not work in 12.0+)
+            Settings.OpenToCategory(MinimapAlert_OptionsFrame.name)
+        end
+    elseif InterfaceOptionsFrame_OpenToCategory then
+        InterfaceOptionsFrame_OpenToCategory("Minimap Alert")
+    end
 end)
 
 local startButton = CreateFrame('Button', nil, guiFrame, 'GameMenuButtonTemplate')
@@ -459,9 +511,11 @@ end
 
 guiFrame:SetScript('OnShow', function(self)
     if minimapAlert.saveData.showWhatsNew then MinimapAlert_WhatsNew:Show() end
-    --if not minimapSettings.alpha then
-    --   storeMinimap()
-    --end
+    -- Store minimap settings on first show if not already stored
+    -- This prevents the minimap from moving when the frame is opened/closed without scanning
+    if not minimapSettings.alpha then
+        storeMinimap()
+    end
 end)
 
 local mainFrame = CreateFrame('Frame')
@@ -733,7 +787,7 @@ local function nodeUpdate(self, elapsed)
 
         if isMatch() then
             if minimapAlert.saveData.settings.flashScreen then fullscreenGlow.Anim:Play() end
-            if minimapAlert.saveData.settings.flashTaskbar then FlashClientIcon() end
+            if minimapAlert.saveData.settings.flashTaskbar and FlashClientIcon then FlashClientIcon() end
             if minimapAlert.saveData.settings.playSound then PlaySound(8959, "Master") end
             guiFrame.glowAnimation:Play()
             foundNode = true
@@ -795,11 +849,13 @@ function startSearching()
 end
 
 local function stopSearching()
-    -- First restore minimap to normal state before switching to DISABLED
-    restoreMinimap()
-    
-    -- Force a complete minimap restoration to ensure it's back to original state
+    -- Only restore minimap if we actually started scanning (settings are initialized)
+    -- This prevents moving the minimap when just opening/closing the frame without scanning
     if minimapSettings.alpha then
+        -- First restore minimap to normal state before switching to DISABLED
+        restoreMinimap()
+        
+        -- Force a complete minimap restoration to ensure it's back to original state
         Minimap:SetAlpha(minimapSettings.alpha)
         Minimap:SetScale(minimapSettings.scale)
         Minimap:ClearAllPoints()
@@ -924,8 +980,12 @@ end
 
 stateList = {
     ['DISABLED'] = function()
-        storeMinimap()
-        restoreMinimap()
+        -- Only store/restore minimap if settings are already initialized
+        -- This prevents moving the minimap when just opening/closing the frame
+        if minimapSettings.alpha then
+            storeMinimap()
+            restoreMinimap()
+        end
         mainFrame:UnregisterEvent('CHAT_MSG_LOOT')
         lootText:Hide()
         stopSpinner()  
